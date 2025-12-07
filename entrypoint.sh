@@ -12,6 +12,8 @@ function run_orca_fs_scan() {
   echo orca-cli "${GLOBAL_FLAGS[@]}" fs scan "${SCAN_FLAGS[@]}"
   orca-cli "${GLOBAL_FLAGS[@]}" fs scan "${SCAN_FLAGS[@]}"
   export ORCA_EXIT_CODE=$?
+  
+  echo "exit_code=${ORCA_EXIT_CODE}" >>"$GITHUB_OUTPUT"
 }
 
 function set_global_flags() {
@@ -31,17 +33,20 @@ function set_global_flags() {
   if [ "${INPUT_CONFIG}" ]; then
     GLOBAL_FLAGS+=(--config "${INPUT_CONFIG}")
   fi
-  if [ "${INPUT_BASELINE_CONTEXT_KEY}" ]; then
-    GLOBAL_FLAGS+=(--baseline-context-key "${INPUT_BASELINE_CONTEXT_KEY}")
-  fi
-  if [ "${INPUT_DISABLE_BASELINE}" == "true" ]; then
-    GLOBAL_FLAGS+=(--disable-baseline)
-  fi
   if [ "${INPUT_DISABLE_ERR_REPORT}" == "true" ]; then
     GLOBAL_FLAGS+=(--disable-err-report)
   fi
-  if [ "${INPUT_SYNC_BASELINE}" ]; then
-    GLOBAL_FLAGS+=(--sync-baseline "${INPUT_SYNC_BASELINE}")
+  if [ "${INPUT_DISPLAY_NAME}" ]; then
+    GLOBAL_FLAGS+=(--display-name "${INPUT_DISPLAY_NAME}")
+  fi
+  if [ "${INPUT_DEBUG}" == "true" ]; then
+    GLOBAL_FLAGS+=(--debug)
+  fi
+  if [ "${INPUT_DISABLE_ACTIVE_VERIFICATION}" == "true" ]; then
+    GLOBAL_FLAGS+=(--disable-active-verification)
+  fi
+  if [ "${INPUT_LOG_PATH}" ]; then
+    GLOBAL_FLAGS+=(--log-path "${INPUT_LOG_PATH}")
   fi
 }
 
@@ -83,6 +88,9 @@ function set_fs_scan_flags() {
   if [ "${INPUT_EXCEPTIONS_FILEPATH}" ]; then
     SCAN_FLAGS+=(--exceptions-filepath "${INPUT_EXCEPTIONS_FILEPATH}")
   fi
+  if [ "${INPUT_TIMEOUT}" ]; then
+    SCAN_FLAGS+=(--timeout "${INPUT_TIMEOUT}")
+  fi
   if [ "${INPUT_SHOW_FAILED_ISSUES_ONLY}" = "true" ]; then
     SCAN_FLAGS+=(--show-failed-issues-only)
   fi
@@ -102,7 +110,22 @@ function set_fs_scan_flags() {
     SCAN_FLAGS+=(--console-output="${CONSOLE_OUTPUT_FOR_JSON}")
   fi
   if [ "${INPUT_CUSTOM_SECRET_CONTROLS}" ]; then
-    SCAN_FLAGS+=(--custom-secret-controls="${INPUT_CUSTOM_SECRET_CONTROLS}")
+    SCAN_FLAGS+=(--custom-secret-controls "${INPUT_CUSTOM_SECRET_CONTROLS}")
+  fi
+  if [ "${INPUT_HIDE_SKIPPED_VULNERABILITIES}" == "true"  ]; then
+    SCAN_FLAGS+=(--hide-skipped-vulnerabilities)
+  fi
+  if [ "${INPUT_MAX_SECRET}" ]; then
+    SCAN_FLAGS+=(--max-secret "${INPUT_MAX_SECRET}")
+  fi
+  if [ "${INPUT_EXCLUDE_PATHS}" ]; then
+    SCAN_FLAGS+=(--exclude-paths "${INPUT_EXCLUDE_PATHS}")
+  fi
+  if [ "${INPUT_DEPENDENCY_TREE}" == "true" ]; then
+    SCAN_FLAGS+=(--dependency-tree)
+  fi
+  if [ "${INPUT_SECURITY_CHECKS}" ]; then
+    SCAN_FLAGS+=(--security-checks "${INPUT_SECURITY_CHECKS}")
   fi
 }
 
